@@ -74,7 +74,7 @@ public static class Noise
                     // This will work fine if we are not using an endless terrain system
                     noiseMap[x, y] = Mathf.InverseLerp(minLocalNoiseHeight, maxLocalNoiseHeight, noiseMap[x, y]); // Returns a value between 0~1
                 } else {
-                    float normalizedHeight = (noiseMap[x, y] + 1) / (maxPossibleHeight);
+                    float normalizedHeight = (noiseMap[x, y] + 1) / (maxPossibleHeight/0.9f);
                     noiseMap[x, y] = Mathf.Clamp(normalizedHeight,0,int.MaxValue);
                 }
                 

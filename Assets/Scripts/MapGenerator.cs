@@ -9,6 +9,8 @@ public class MapGenerator : MonoBehaviour
     public enum DrawMode { NoiseMap, ColourMap, Mesh };
     public DrawMode drawMode;
 
+    public Noise.NormalizeMode normalizeMode;
+
     public const int mapChunkSize = 241; // 241 - 1 = 240 (factor of 2, 4, 6, 8, 10, 12)
     [Range(0,6)]
     public int editorPreviewLOD;
@@ -97,7 +99,7 @@ public class MapGenerator : MonoBehaviour
     }
 
     MapData GenerateMapData(Vector2 centre) {
-        float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, centre + offset);
+        float[,] noiseMap = Noise.GenerateNoiseMap(mapChunkSize, mapChunkSize, seed, noiseScale, octaves, persistance, lacunarity, centre + offset, normalizeMode);
 
         // Determine the color of the map by terrain height
         Color[] colourMap = new Color[mapChunkSize * mapChunkSize];
@@ -105,8 +107,9 @@ public class MapGenerator : MonoBehaviour
             for (int x = 0; x < mapChunkSize; x++) {
                 float currentHeight = noiseMap[x, y];
                 for (int i = 0; i < regions.Length; i++) {
-                    if (currentHeight <= regions[i].height) {
+                    if (currentHeight >= regions[i].height) {
                         colourMap[y * mapChunkSize + x] = regions[i].colour;
+                    } else {
                         break;
                     }
                 }

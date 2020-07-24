@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EndlessTerrain : MonoBehaviour
 {
+    const float scale = 1f;
+
     const float viewerMoveThresholdForChunkUpdate = 25f;
     const float sqrViewerMoveThresholdForChunkUpdate = viewerMoveThresholdForChunkUpdate * viewerMoveThresholdForChunkUpdate;
 
@@ -35,7 +37,7 @@ public class EndlessTerrain : MonoBehaviour
 
     private void Update()
     {
-        viewerPosition = new Vector2(viewer.position.x, viewer.position.z);
+        viewerPosition = new Vector2(viewer.position.x, viewer.position.z) / scale;
 
         // Update chunk if viewer has moved more than our threshold
         if ((viewerPositionOld - viewerPosition).sqrMagnitude > sqrViewerMoveThresholdForChunkUpdate) {
@@ -97,8 +99,9 @@ public class EndlessTerrain : MonoBehaviour
             meshFilter = meshObject.AddComponent<MeshFilter>();
             meshRenderer.material = material;
 
-            meshObject.transform.position = positionV3;
+            meshObject.transform.position = positionV3 * scale;
             meshObject.transform.parent = parent;
+            meshObject.transform.localScale = Vector3.one * scale;
             SetVisible(false);
 
             // Create level of detail meshes
@@ -131,7 +134,7 @@ public class EndlessTerrain : MonoBehaviour
                     int lodIndex = 0;
 
                     for (int i = 0; i < detailLevels.Length - 1; i++) {
-                        if (viewerDstFromNearestEdge > detailLevels[i].visibleDstThreshold) {
+                        if (viewerDstFromNearestEdge > detailLevels[i].visibleDstThreshold) { // When viewer distance is greater than the threshold, move to the next level of detail
                             lodIndex = i + 1;
                         } else {
                             break;
